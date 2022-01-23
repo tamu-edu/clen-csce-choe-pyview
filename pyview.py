@@ -8,8 +8,19 @@
 # A image viewer. Require Pillow ( https://pypi.python.org/pypi/Pillow/ ).
 #
 # Modified by Yoonsuck Choe
+#
 # - takes list of files through command line argument
+#   example
+#
+#     ./pyview.py "../../Pictures/*.*"
+#
 # - navigate via key binding, not buttons
+#
+#      [<-] : previous
+#      [->] : next
+#      [f]  : toggle fullscreen
+#      [ESC] : exit
+#
 ##############################################################################
 import PIL.Image
 import sys
