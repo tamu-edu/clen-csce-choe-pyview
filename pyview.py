@@ -36,7 +36,7 @@ class App(Frame):
     def show_image(self,idx):
          image_path = self.flist[idx]
          #print("Displaying {}".format(image_path), flush=True)
-         self.master.title("pyview.py: {}".format(image_path))
+         self.master.title("pyview.py [{}/{}]: {}".format(self.num_page,self.flist_size,image_path))
          pil_image = PIL.Image.open(image_path)
          self.chg_image(pil_image)
          self.master.update()
