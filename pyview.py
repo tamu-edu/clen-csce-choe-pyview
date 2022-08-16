@@ -21,6 +21,11 @@
 #      [f]  : toggle fullscreen
 #      [ESC] : exit
 #
+# - report bounding box (buggy: only works in fullscreen mode)
+#      [left click]  : starting pixel
+#      [right click] : ending pixel
+#      prints out [width]x[height]+[start_x]+[start_y]
+#
 ##############################################################################
 import PIL.Image
 import sys
@@ -34,7 +39,13 @@ except ImportError:
     from tkinter import filedialog
 import PIL.ImageTk
 
+
 class App(Frame):
+
+    COORD_sx = 0
+    COORD_ex = 0
+    p_root = Tk()
+
     def chg_image(self,img):
 
         scr_w = self.master.winfo_screenwidth()
@@ -88,6 +99,19 @@ class App(Frame):
         self.show_image(self.num_page)
         #self.num_page_tv.set(str(self.num_page+1))
 
+    def leftclick(self, event=None):
+        x = self.p_root.winfo_pointerx() - self.p_root.winfo_rootx()
+        y = self.p_root.winfo_pointery() - self.p_root.winfo_rooty()
+        self.COORD_sx = x
+        self.COORD_sy = y
+        #print('{}x{}'.format(x,y), end='')
+ 
+    def rightclick(self, event=None):
+        x = self.p_root.winfo_pointerx() - self.p_root.winfo_rootx()
+        y = self.p_root.winfo_pointery() - self.p_root.winfo_rooty()
+        print('{}x{}+{}+{}'.format(x-self.COORD_sx,y-self.COORD_sy,
+		self.COORD_sx,self.COORD_sy))
+
     def __init__(self, argv, master=None):
         Frame.__init__(self, master)
         self.master.title('Image Viewer')
@@ -98,7 +122,7 @@ class App(Frame):
         self.fullscreen_flag = False
 
         # yschoe: get filelist
-        self.flist = glob.glob(argv[1],recursive=True)
+        self.flist = sorted(glob.glob(argv[1],recursive=True))
         self.flist_size = len(self.flist)
         print('pyview.py: Displaying {}: {} files'.format(argv[1],self.flist_size),flush=True)
 
@@ -110,6 +134,10 @@ class App(Frame):
         self.master.bind('<f>',self.toggle_fullscreen)
         Label(fram, textvariable=self.num_page_tv).pack(side=LEFT)
         fram.pack(side=TOP, fill=BOTH)
+
+	# yschoe: click to report pixel coordinate
+        self.master.bind('<Button-1>',self.leftclick)
+        self.master.bind('<Button-3>',self.rightclick)
 
         # this is the canvas
         self.la = Label(self)
